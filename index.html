@@ -269,7 +269,7 @@
                 const productSpecs = realItem.description || "Verified active market retail commodity listing.";
 
                 // Fetch real-time exchange parameters securely over HTTPS
-                let liveAedRate = rates.AED;
+                let liveAedRate = 3.6725;
                 try {
                     const fxResponse = await fetch('https://er-api.com');
                     if (fxResponse.ok) {
@@ -277,7 +277,7 @@
                         liveAedRate = fxData.rates.AED || 3.6725;
                     }
                 } catch (fxErr) {
-                    liveAedRate = rates.AED;
+                    console.warn("Using fallback exchange rate:", fxErr);
                 }
 
                 consoleBox.style.display = "none";
