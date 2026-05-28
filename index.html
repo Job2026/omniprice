@@ -268,7 +268,7 @@
                 const productThumbnail = realItem.thumbnail || "https://unsplash.com"; 
                 const productSpecs = realItem.description || "Verified active market retail commodity listing.";
 
-                // Fetch real-time exchange parameters securely over HTTPS
+               // Fetch real-time exchange parameters securely over HTTPS
                 let liveAedRate = 3.6725;
                 try {
                     const fxResponse = await fetch('https://er-api.com');
@@ -278,6 +278,7 @@
                     }
                 } catch (fxErr) {
                     console.warn("Using fallback exchange rate:", fxErr);
+                    liveAedRate = 3.6725;
                 }
 
                 consoleBox.style.display = "none";
