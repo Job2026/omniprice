@@ -241,132 +241,140 @@
         }
 
         // Step 3: Core Multi-Marketplace Landed Cost Comparison Engine
-        function executeRealMarketSearch() {
-            const inputField = document.getElementById('search-query');
-            let query = inputField ? inputField.value.trim().toLowerCase() : '';
-            
-            const statusConsole = document.getElementById('status-console');
-            const resultsTitle = document.getElementById('results-title');
-            const merchantContainer = document.getElementById('merchant-container');
-            
-            if (!query) {
-                statusConsole.style.display = 'none';
-                resultsTitle.style.display = 'none';
-                merchantContainer.innerHTML = '';
-                return;
+        function executeConsumerSearch(mode) {
+        const inputField = document.getElementById('search-query');
+        let query = inputField ? inputField.value.trim().toLowerCase() : '';
+        
+        const statusConsole = document.getElementById('status-console');
+        const resultsTitle = document.getElementById('results-title');
+        const merchantContainer = document.getElementById('merchant-container');
+        
+        if (!query) {
+            if (statusConsole) statusConsole.style.display = 'none';
+            if (resultsTitle) resultsTitle.style.display = 'none';
+            if (merchantContainer) merchantContainer.innerHTML = '';
+            return;
+        }
+
+        // Safety Typo Guard Intercept
+        if (query === "sucks" || query === "suck") { query = "socks"; }
+
+        // Flash a sleek loading screen
+        if (statusConsole) {
+            statusConsole.style.display = 'block';
+            statusConsole.innerHTML = `📡 [CONNECTING TO GLOBAL LOGISTICS EDGE DEPLOYMENT...]`;
+        }
+        
+        // Hide previous assets while parsing
+        if (resultsTitle) resultsTitle.style.display = 'none';
+        if (merchantContainer) merchantContainer.innerHTML = '';
+        
+        // Core parameters based on user payload selection matrix (1.5 kg baseline target standard)
+        const weight = 1.5; 
+
+        // Simulate connection or hit your local running Node port
+        setTimeout(() => {
+            // Advanced Real-Market Values (USD Core Pricing Metrics Matrix)
+            let baseUSD = 150; 
+            let productTitle = `${query.toUpperCase()} (Commercial Grade Node)`;
+            let defaultImage = "https://unsplash.com";
+
+            if (query.includes("16 pro") || query.includes("iphone 16")) {
+                baseUSD = 999;
+                defaultImage = "https://unsplash.com";
+            } else if (query.includes("phone")) {
+                baseUSD = 400;
+                defaultImage = "https://unsplash.com";
+            } else if (query.includes("watch")) {
+                baseUSD = 299;
+                defaultImage = "https://unsplash.com";
+            } else if (query.includes("laptop")) {
+                baseUSD = 1200;
+                defaultImage = "https://unsplash.com";
             }
 
-            // Safety Typo Guard Intercept
-            if (query === "sucks" || query === "suck") { query = "socks"; }
+            // Real-World Cross-Border Shipping Lane Parameters for Dubai Commercial Markets
+            const marketChannels = [
+                { 
+                    name: "HK-DXB Air Express (Priority Flight)", 
+                    baseUSD: baseUSD * 0.95, // Wholesale sourcing volume metrics
+                    freightRatePerKgUSD: 4.50, // Standard air express pricing index
+                    dutyRate: 0.05, // 5% Dubai Customs Duty Regulation Standard
+                    vatRate: 0.05, // 5% FTA Consumer VAT
+                    deliveryDays: 3 
+                },
+                { 
+                    name: "CN-DXB Sea Freight (LCL Cargo Node)", 
+                    baseUSD: baseUSD * 0.88, // Bulk factory contract drop
+                    freightRatePerKgUSD: 0.80, // Sea shipping metrics
+                    dutyRate: 0.05, 
+                    vatRate: 0.05, 
+                    deliveryDays: 22 
+                }
+            ];
 
-            // Flash a sleek loading screen inside your status console
-            statusConsole.style.display = 'block';
-            statusConsole.innerHTML = `
-                📡 [CROSS-BORDER CONSUMER AGGREGATION INITIALIZED...]<br>
-                🔍 Scraping consumer price indices for "${query.toUpperCase()}"...<br>
-                💱 Normalizing currencies at active exchange matrix metrics...<br>
-                ✈️ Estimating final doorstep custom duties & freight logistics...
-            </h5>`;
-            
-            // Hide previous results while loading
-            resultsTitle.style.display = 'none';
-            merchantContainer.innerHTML = '';
-            
-            // Hide previous results while loading
-            resultsTitle.style.display = 'none';
-            merchantContainer.innerHTML = '';
+            // Process real costs into user active currency values
+            const userRate = exchangeRates[activeCurrency];
 
-            // Simulate server aggregation delay
-            setTimeout(() => {
-                // Base multipliers to dynamically change prices based on what user types
-                let productMultiplier = 1.0;
-                let defaultImage = "https://unsplash.com"; // Fallback image
+            const processedResults = marketChannels.map(channel => {
+                const itemCostAED = (channel.baseUSD * exchangeRates.AED);
+                const shippingCostAED = (weight * channel.freightRatePerKgUSD) * exchangeRates.AED;
+                const customsDutyAED = itemCostAED * channel.dutyRate;
+                const vatAED = (itemCostAED + shippingCostAED + customsDutyAED) * channel.vatRate;
+                
+                const totalLandedCostAED = itemCostAED + shippingCostAED + customsDutyAED + vatAED;
+                const finalConvertedTotal = (totalLandedCostAED / exchangeRates.AED) * userRate;
 
-                if (query.includes("phone")) { productMultiplier = 450; defaultImage = "https://unsplash.com"; }
-                else if (query.includes("watch")) { productMultiplier = 120; defaultImage = "https://unsplash.com"; }
-                else if (query.includes("laptop")) { productMultiplier = 850; defaultImage = "https://unsplash.com"; }
-                else if (query.includes("shoe") || query.includes("sneaker")) { productMultiplier = 75; defaultImage = "https://unsplash.com"; }
-                else if (query.includes("sock")) { productMultiplier = 8; defaultImage = "https://unsplash.com"; }
-                else { productMultiplier = 45; defaultImage = "https://unsplash.com"; }
+                return {
+                    name: channel.name,
+                    baseCost: (itemCostAED / exchangeRates.AED) * userRate,
+                    logisticsFees: ((shippingCostAED + customsDutyAED + vatAED) / exchangeRates.AED) * userRate,
+                    deliveryDays: channel.deliveryDays,
+                    totalPrice: finalConvertedTotal
+                };
+            });
 
-                // The global multi-lane consumer marketplace database
-                const marketChannels = [
-                    { name: "Amazon Marketplace (Local Hub)", baseNative: productMultiplier * 1.05, currency: "AED", shippingNative: 10, dutyRate: 0.00, deliveryDays: 2 },
-                    { name: "AliExpress Delivery (Air Freight Node)", baseNative: productMultiplier * 0.23, currency: "USD", shippingNative: 12, dutyRate: 0.05, deliveryDays: 12 },
-                    { name: "DragonMart Online Wholesalers", baseNative: productMultiplier * 0.85, currency: "AED", shippingNative: 25, dutyRate: 0.00, deliveryDays: 3 }
-                ];
+            const winner = processedResults.reduce((prev, curr) => prev.totalPrice < curr.totalPrice ? prev : curr);
 
-                const userRate = exchangeRates[activeCurrency];
-
-                // Calculate complete breakdown matrix for all channels
-                const processedResults = marketChannels.map(channel => {
-                    const originRate = exchangeRates[channel.currency];
-                    
-                    // Convert native marketplace currency to user selected base currency
-                    const baseConverted = (channel.baseNative / originRate) * userRate;
-                    const shippingConverted = (channel.shippingNative / originRate) * userRate;
-                    const customsDuty = baseConverted * channel.dutyRate;
-                    const localVat = baseConverted * 0.05; // 5% Standard Consumer VAT
-                    
-                    const finalDoorstepCost = baseConverted + shippingConverted + customsDuty + localVat;
-
-                    return {
-                        ...channel,
-                        baseCost: baseConverted,
-                        logisticsFees: shippingConverted + customsDuty + localVat,
-                        totalPrice: finalDoorstepCost
-                    };
-                });
-
-                // Isolate the absolute cheapest channel option automatically
-                const winner = processedResults.reduce((prev, curr) => prev.totalPrice < curr.totalPrice ? prev : curr);
-
-                // Clear console status and reveal heading
-                statusConsole.style.display = 'none';
-                resultsTitle.style.display = 'block';
+            if (statusConsole) statusConsole.style.display = 'none';
+            if (resultsTitle) resultsTitle.style.display = 'block';
+            if (merchantContainer) {
                 merchantContainer.innerHTML = '';
 
-                // Loop and dynamically render your merchant cards into the container
                 processedResults.forEach(channel => {
                     const isWinner = channel.name === winner.name;
                     const cardHtml = `
-                        <div class="merchant-card ${isWinner ? 'card-winner' : ''}">
+                        <div class="merchant-card ${isWinner ? 'card-winner' : ''}" style="display: block;">
                             <div class="product-meta-block">
                                 <img src="${defaultImage}" class="product-thumb" alt="Product Image">
                                 <div>
-                                    <div class="product-details-title">${query.toUpperCase()} ${query.includes('phone') || query.includes('laptop') ? 'Pro Max' : 'Premium Pack'}</div>
+                                    <div class="product-details-title">${productTitle}</div>
                                     <div style="font-size: 11px; color: ${isWinner ? 'var(--accent-green)' : 'var(--accent-blue)'}; font-weight: bold; margin-top: 2px;">
-                                        ${isWinner ? '🥇 Lowest Cost Node: ' : '🌐 Alternate Channel: '} ${channel.name}
+                                        ${isWinner ? '🥇 Optimized Logistics Node: ' : '🌐 Alternate Route: '} ${channel.name}
                                     </div>
                                 </div>
                             </div>
                             <div class="cost-row">
-                                <span>Vendor Baseline Cost</span>
+                                <span>FOB Sourcing Price</span>
                                 <span>${currencySymbol} ${channel.baseCost.toFixed(2)}</span>
                             </div>
                             <div class="cost-row">
-                                <span>Freight, Duties & Local VAT</span>
+                                <span>Freight + Duty (5%) + VAT (5%)</span>
                                 <span>${currencySymbol} ${channel.logisticsFees.toFixed(2)}</span>
                             </div>
                             <div class="cost-row" style="font-size: 11px; color: rgba(255,255,255,0.4);">
-                                <span>Estimated Transit Velocity</span>
-                                <span>${channel.deliveryDays} Days</span>
+                                <span>Transit Velocity Parameters</span>
+                                <span>Est. ${channel.deliveryDays} Days</span>
                             </div>
                             <div class="total-row">
-                                <span>Landed Doorstep Total</span>
+                                <span>Final Landed Doorstep Total</span>
                                 <span style="color: ${isWinner ? 'var(--accent-green)' : '#fff'};">${currencySymbol} ${channel.totalPrice.toFixed(2)}</span>
                             </div>
-                            <button class="btn-buy">${isWinner ? 'Secure Lowest Sourcing Offer' : 'Select Sourcing Node'}</button>
+                            <button class="btn-buy">${isWinner ? 'Lock Sourcing Allocation' : 'Select Sourcing Node'}</button>
                         </div>
                     `;
                     merchantContainer.innerHTML += cardHtml;
                 });
-
-            }, 800);
-        }
-
-        // Initialize rates instantly on launch
-        fetchMarketRates();
-    </script>
-</body>
-</html>
+            }
+        }, 800);
+    }
