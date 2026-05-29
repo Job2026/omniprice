@@ -215,7 +215,7 @@
         async function fetchMarketRates() {
             let liveAedRate = 3.6725;
             try {
-                const fxResponse = await fetch('https://er-api.com');
+                const fxResponse = await fetch('https://open.er-api.com/v6/latest/USD');
                 if (fxResponse.ok) {
                     const fxData = await fxResponse.json();
                     exchangeRates.USD = fxData.rates.USD || 1.0;
