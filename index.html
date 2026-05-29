@@ -241,38 +241,27 @@
         }
 
         // Step 3: Core Multi-Marketplace Landed Cost Comparison Engine
-        function executeConsumerSearch(mode) {
-        const inputField = document.getElementById('search-query');
-        let query = inputField ? inputField.value.trim().toLowerCase() : '';
-        
-        const statusConsole = document.getElementById('status-console');
-        const resultsTitle = document.getElementById('results-title');
-        const merchantContainer = document.getElementById('merchant-container');
-        
-        if (!query) {
-            if (statusConsole) statusConsole.style.display = 'none';
-            if (resultsTitle) resultsTitle.style.display = 'none';
-            if (merchantContainer) merchantContainer.innerHTML = '';
-            return;
-        }
+        async function executeConsumerSearch(mode) {
+            const inputField = document.getElementById('search-query');
+            let query = inputField ? inputField.value.trim().toLowerCase() : '';
+            
+            const statusConsole = document.getElementById('status-console');
+            const resultsTitle = document.getElementById('results-title');
+            const merchantContainer = document.getElementById('merchant-container');
+            
+            if (!query) return;
 
-        // Safety Typo Guard Intercept
-        if (query === "sucks" || query === "suck") { query = "socks"; }
+            if (statusConsole) {
+                statusConsole.style.display = 'block';
+                statusConsole.innerHTML = `📡 [CONNECTING TO GLOBAL LOGISTICS EDGE DEPLOYMENT...]`;
+            }
 
-        // Flash a sleek loading screen
-        if (statusConsole) {
-            statusConsole.style.display = 'block';
-            statusConsole.innerHTML = `📡 [CONNECTING TO GLOBAL LOGISTICS EDGE DEPLOYMENT...]`;
-        }
-        
-        // Hide previous assets while parsing
-        if (resultsTitle) resultsTitle.style.display = 'none';
-        if (merchantContainer) merchantContainer.innerHTML = '';
-        
-        // Core parameters based on user payload selection matrix (1.5 kg baseline target standard)
-        const weight = 1.5; 
+            let baseUSD = 150; 
+            let productTitle = `${query.toUpperCase()} (Commercial Grade Node)`;
+            let defaultImage = "https://unsplash.com";
+
             try {
-                // Connects your phone across the internet directly to your laptop server!
+                // Linked directly to your active running laptop server over the web!
                 const response = await fetch(`https://ngrok-free.dev{encodeURIComponent(query)}&weightKg=1.5`);
                 if (response.ok) {
                     const serverData = await response.json();
@@ -281,7 +270,7 @@
                     defaultImage = serverData.image;
                 }
             } catch (err) {
-                console.warn("Server offline, using offline parameters");
+                console.warn("Server offline, using local parameters.");
             }
 
         // Simulate connection or hit your local running Node port
